@@ -1,27 +1,17 @@
 metadata:
-  name: pth.nnunet.2d.4ch
+  name: onnx.nnunet.2d.3vt
   namespace: cvat
   annotations:
-    name: nnunet_4ch
+    name: nnunet_3vt_onnx
     type: detector
-    framework: pytorch
+    framework: onnx
     spec: |
       [
-        { "id": 1, "name": "Outer Thorax" },
-        { "id": 2, "name": "Heart Contour" },
-        { "id": 3, "name": "IV Septum" },
-        { "id": 4, "name": "RA" },
-        { "id": 5, "name": "LA" },
-        { "id": 6, "name": "RV" },
-        { "id": 7, "name": "LV" },
-        { "id": 8, "name": "dAorta" },
-        { "id": 9, "name": "Atrium Septum" },
-        { "id": 10, "name": "Spine Triangle" },
-        { "id": 11, "name": "Mitral Valve" },
-        { "id": 12, "name": "Tricuspid Valve" },
-        { "id": 13, "name": "AV Septum" },
-        { "id": 14, "name": "PV1 (RPV)" },
-        { "id": 15, "name": "PV2 (LPV)" }
+        { "id": 1, "name": "Aortic Arch" },
+        { "id": 2, "name": "Ductal Arch" },
+        { "id": 3, "name": "SVC" },
+        { "id": 4, "name": "Trachea" },
+        { "id": 5, "name": "Spine" }
       ]
 
 spec:
@@ -31,7 +21,7 @@ spec:
   eventTimeout: 30s
 
   build:
-    image: cvat/pth.nnunet.2d.4ch
+    image: cvat/onnx.nnunet.2d.3vt
     baseImage: ubuntu:20.04
 
     directives:
@@ -45,17 +35,13 @@ spec:
         - kind: RUN
           value: pip3 install torch==1.10.1+cu113 torchvision==0.11.2+cu113 torchaudio==0.10.1+cu113 -f https://download.pytorch.org/whl/cu113/torch_stable.html
         - kind: RUN
-          value: pip install -U setuptools && pip install nnunet
+          value: pip install -U setuptools 
         - kind: RUN
-          value: pip3 install nibabel SimpleITK pynvml matplotlib opencv-python scikit-image
+          value: pip3 install nibabel SimpleITK pynvml matplotlib opencv-python scikit-image onnx onnxruntime einops pillow
         - kind: RUN
           value: mkdir nnUNet_trained_models && mkdir input_2d_png && mkdir input_nii && mkdir output_2d_png && mkdir output_nii
         - kind: RUN
-          value: cd nnUNet_trained_models && mkdir nnUNet && cd nnUNet && mkdir 2d && cd 2d && curl 'https://docs.philips.com/personal/prajwal_bende_philips_com/_layouts/15/download.aspx?SourceUrl=%2Fpersonal%2Fprajwal%5Fbende%5Fphilips%5Fcom%2FDocuments%2FDesktop%2FPROJECTS%2FAuto%5Flabelling%2FTask804%5F4C15%5FRevised%5FAUG%5FS%2Ezip' -H 'authority:docs.philips.com' -H 'sec-ch-ua:" Not;A Brand";v="99", "Microsoft Edge";v="97", "Chromium";v="97"' -H 'sec-ch-ua-mobile:?0' -H 'sec-ch-ua-platform:"Windows"' -H 'upgrade-insecure-requests:1' -H 'user-agent:Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/97.0.4692.99 Safari/537.36 Edg/97.0.1072.76' -H 'accept:text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.9' -H 'service-worker-navigation-preload:true' -H 'sec-fetch-site:same-origin' -H 'sec-fetch-mode:navigate' -H 'sec-fetch-dest:iframe' -H 'referer:https://docs.philips.com/personal/prajwal_bende_philips_com/_layouts/15/onedrive.aspx?id=%2Fpersonal%2Fprajwal%5Fbende%5Fphilips%5Fcom%2FDocuments%2FDesktop%2FPROJECTS%2FAuto%5Flabelling%2FTask804%5F4C15%5FRevised%5FAUG%5FS%2Ezip&parent=%2Fpersonal%2Fprajwal%5Fbende%5Fphilips%5Fcom%2FDocuments%2FDesktop%2FPROJECTS%2FAuto%5Flabelling' -H 'accept-language:en-US,en;q=0.9' -H 'cookie:rtFa=mdxEDVRxkHK8iHDbMyu9CqGaW+L6dJ+e3jWCKLs3rUcmMUE0MDdBMkQtNzY3NS00RDE3LTg2OTItQjNBQzI4NTMwNkU0IzEzMjg4NDM3NTA1MzQ1MjU1NyNGNDYwMURBMC0zMENGLTMwMDAtQTBDQS0zRkNGQURGMzZBMUIjUFJBSldBTC5CRU5ERSU0MFBISUxJUFMuQ09NnazIZSlJiH2kEk6SeQPsAsrDQu7qy4DLs2uiHzAo7h3cyJUoAdK6fe7KwvShGnLqN6t1TyXlNyqFd4oG4p7BLym8FpxTC/y1BiA/FZTkzbCnMQ340Za8jAi/H4dS9AmHf86pUay14ZRyjGk6yeQJGx2lh+7a3QJWrCfQxL8SlHEax6jBKKLx6s9J3Da6WCxXiY88x8FKMYga9mpLjAXeWzXpL7Va8S9x5yRa8VbKKiSSVi6w7LEy1ddxPCRg82c8RudjCuqxItEvnTrZa0tlo9iR8318vFZ+dl35An8/TlXsTYDVcUFVE479q/9/BQrDZXDYOR6W1U72x8cAZaOTuJkAAAA=; FedAuth=77u/PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0idXRmLTgiPz48U1A+VjExLDBoLmZ8bWVtYmVyc2hpcHwxMDAzMjAwMTZhYTk1MmM3QGxpdmUuY29tLDAjLmZ8bWVtYmVyc2hpcHxwcmFqd2FsLmJlbmRlQHBoaWxpcHMuY29tLDEzMjg4NDIxMTA4MDAwMDAwMCwxMzI4MjgwMzg0MDAwMDAwMDAsMTMyODg4Njk1MDUzMjk2MjQ3LDQ5LjIwNS4xNDQuMTMwLDE2MiwxYTQwN2EyZC03Njc1LTRkMTctODY5Mi1iM2FjMjg1MzA2ZTQsLDg3OTY3MzFlLWVmNTMtNDczMC1iMDkwLTA5Y2VjN2VkYWE5ZSxmNDYwMWRhMC0zMGNmLTMwMDAtYTBjYS0zZmNmYWRmMzZhMWIsZjQ2MDFkYTAtMzBjZi0zMDAwLWEwY2EtM2ZjZmFkZjM2YTFiLCwwLDEzMjg4NTIzOTA1Mjk4Mzg4NiwxMzI4ODY5NjcwNTI5ODM4ODYsLCxleUo0YlhOZlkyTWlPaUpiWENKRFVERmNJbDBpTENKNGJYTmZjM050SWpvaU1TSXNJbkJ5WldabGNuSmxaRjkxYzJWeWJtRnRaU0k2SW5CeVlXcDNZV3d1WW1WdVpHVkFjR2hwYkdsd2N5NWpiMjBpZlE9PSwyNjUwNDY3NzQzOTk5OTk5OTk5LDEzMjg4NDM3NTA0MDAwMDAwMCxhZTRiMGU0Ny1kYWE5LTRkMzMtYTZkMC05ODZkZmRhYjhkZjQsLCwsLCwwLFBWZnI5VG9JZHhnZng4eTl2QzJxaXNaMlZWZEN3RnpTTitTd1FBNjJRMXhtK0g5clFjSGVOcnRJRUNvd3FzYUMyY0FhaTUvOUVLUWpCV0tGYnZkUnhyNXk0SEV4anpaazFLS2pzRlNDdHNjd1JpeXFiNGhpaGxJSU0vMzdlS0pkYVZUTzd1TG1lNFJLWXlURkxqTVI3eWJXaU04RjM5L2ZyRmhtR3pGQmgyNS9oSGhabktuNUF0NTdxZSsrMXhGSExTK3JUQmFFbEpvaGVuYzJTVUNVN2dEMG1rUHR0dENudFlUVG5hTWxZUVRjcDkrSVdUMTUyZG9ueGxhQ21XYWREUzAxN3pSbE8vQ2JEbWNzcUU5Z1BCVE4zRHZvN2RKNDZnSGR1OUorY2xISDE0bzJHejlvd2tISkV0SEhhbjc4L3VRT2JiYWZmUVh4SkZqMGtSUjdPdz09PC9TUD4=; CCSInfo=Mi83LzIwMjIgMTA6NDM6MjMgQU1TzJXHUFtBeDxOP4ymhAgaUsYKWoobcBDnn64aQAFO/2gPR3EF9wmMTLBrXT067YoY4cJ1rA0eXUDqg5RRC6YSyG+Fx74C6ebHwH8lBxv4v6zuYCLH2p3lZ/cq98Wc54hRH5p79clYvpWP8rRwXg9FzGwkHeifIKzdAHRPDwX2zUnwfHwwyvc2Ex6zGJjS19BIM2Xk34WbwTr57Iq+Mx1FZYRQqq23VlYBRLwSBo8748NAxDzQF0jcyhJUoP+m7y+5lktt7p4++FmAHgNPS8zYx3zPiwED4g7Cama9xDFBrphbYwCSSXqnYsjyLTcgAHkYEqMEzXIXHg+OSJfhQkZzFAAAAA==; KillSwitchOverrides_enableKillSwitches=; KillSwitchOverrides_disableKillSwitches=; odbn=1; cucg=1' --compressed --output Task804_4C15_Revised_AUG_S.zip
-        - kind: RUN
-          value: cd nnUNet_trained_models/nnUNet/2d && unzip Task804_4C15_Revised_AUG_S.zip && cd ../../..
-        - kind: ENV
-          value: RESULTS_FOLDER="nnUNet_trained_models"
+          value: cd nnUNet_trained_models && mkdir nnUNet && cd nnUNet && mkdir 2d && cd 2d && curl 
         - kind: RUN
           value: ln -s /usr/bin/pip3 /usr/local/bin/pip
 
