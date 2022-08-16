@@ -6,8 +6,8 @@ import time
 import os.path as osp
 import numpy as np
 import matplotlib
-import nibabel as nb
-import SimpleITK as sitk
+#import nibabel as nb
+#import SimpleITK as sitk
 import matplotlib.pyplot as plt
 from pynvml import *
 import os
@@ -17,8 +17,8 @@ import cv2
 import subprocess
 import onnx
 import onnxruntime
-import torch
-import torchvision
+#import torch
+#import torchvision
 
 
 
@@ -26,11 +26,8 @@ from einops import rearrange,repeat,reduce
 
 from skimage.measure import approximate_polygon, subdivide_polygon, find_contours
 
-os.environ['RESULTS_FOLDER'] = 'nnUNet_trained_models'
-transform = torchvision.transforms.Compose([
-    torchvision.transforms.ToTensor(),
+#os.environ['RESULTS_FOLDER'] = 'nnUNet_trained_models'
 
-])
 def get_gpu_lowest_usage():
   nvmlInit()
   gpu_free_mem = []
@@ -106,21 +103,19 @@ def handler(context, event):
     if len(input_image_numpy.shape)<3:
       input_image_numpy = np.stack((input_image_numpy,)*3, axis=-1)
 
-   
-   
-
     ort_session = onnxruntime.InferenceSession(onnx_path)
 
     original_img = input_image_numpy.copy()
     img = repeat(original_img,'h w->h w')
+    
     print("Debug purpose",img.shape)
-    img_y = transform(img)
-    img_y = img_y.squeeze(0)
-    print("Debug purpose",img_y.shape)
+    #img_y = transform(img)
+    #img_y = img_y.squeeze(0)
+    #print("Debug purpose",img_y.shape)
 
     tic = time.time()
 
-    zx = ort_session.run(['fin_output_int'], {'input': to_numpy(img_y)})
+    zx = ort_session.run(['fin_output_int'], {'input': np.array(img})
     output=zx[0]
     tac = time.time()
     FPS = 1/(tac-tic)
