@@ -103,7 +103,7 @@ def handler(context, event):
     if len(input_image_numpy.shape)<3:
       input_image_numpy = np.stack((input_image_numpy,)*3, axis=-1)
 
-    ort_session = onnxruntime.InferenceSession(onnx_path)
+    ort_session = onnxruntime.InferenceSession('nnUNet_onnx_models/***.onnx')
 
     original_img = input_image_numpy.copy()
     img = repeat(original_img,'h w->h w')
